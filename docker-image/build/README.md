@@ -3,7 +3,7 @@
 ## Prerequisits
 
 All you need is the `Dockerfile` in this directory, and
-checkout_and_build_auto.py[https://github.com/NCAR/lrose-core/blob/master/build/checkout_and_build_auto.py] from the lrose-core/build directory.
+[checkout_and_build_auto.py](https://github.com/NCAR/lrose-core/blob/master/build/checkout_and_build_auto.py) from the lrose-core/build directory.
 
 ## Build the image
 
