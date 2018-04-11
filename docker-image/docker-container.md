@@ -32,7 +32,13 @@ lrose-blaze         latest              0a2ce9c9ae0f
 ubuntu_apache2      latest              4b5eefbe9c6c 
 ncareol/soloii      latest              baa1ee4c3541
 ```
+Chances are that instead of a name and tag, you will see **none**.
+Since the **lrose** wrapper assumes an image name of *lrose-blaze* you want to tag the image. Use the `docker tag` command to do that. (Replace **0a2ce9c9ae0f** with the image ID `docker images` shows you)
 
+```
+docker tag lrose-blaze:04112018 0a2ce9c9ae0f
+```
+	
 ### Using the lrose wrapper ###
 
 The `lrose` wrapper is a bash script that tries to make running and
