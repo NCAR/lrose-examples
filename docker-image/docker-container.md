@@ -59,8 +59,15 @@ For example, to run `HawkEye` in archive mode.
 lrose -- HawkEye -archive_url /tmp/KHGX -start_time "2017 08 00 00 00" -time_span 7200
 ```
 
-The `lrose` wrapper reads in ~/.lroseargs which, for now, only supports
-volume mappings, one mapping per line. For the example above, you'd
+The `lrose` wrapper reads in ~/.lroseargs which allows you to specify additional options to the `docker run` command. 
+It supports volume, environment, and raw arguments. Add any combination, one option per line.
+
+  * Comments start with **#**
+  * /from:to is passed as **-v /from:/to**
+  * var=value is passed as **-e var=value**
+  * -anything is pased as is
+  
+For the example above, you'd
 add an entry to map your data directory to /tmp/KHGX in the container.
 
 You can also add entries for other folders you might need in the
@@ -77,6 +84,21 @@ container. For example:
 
 The `lrose` wrapper will convert all of these to `--volume` options
 when running a container.
+
+### Dealing with graphic accelerators ###
+
+This is only needed for X11 graphic programs such as HawkEye, if you care about hardware acceleration. If the performance is good enough you can skip this section.
+
+You might get this error message when running *HawkEye*:
+*libGL error: failed to open drm device: No such file or directory* 
+
+Follow [this guide](http://wiki.ros.org/docker/Tutorials/Hardware%20Acceleration) if you want to use graphic acceleration 
+
+If your machine is using Intel graphics, adding the following to your **~/.lroseargs** would do the trick.
+
+```
+--device=/dev/dri:/dev/dri:rw
+```
 
 ### Starting an lrose-blaze container
 
