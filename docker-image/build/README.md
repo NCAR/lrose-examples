@@ -2,15 +2,13 @@
 
 ## Prerequisits
 
-All you need is the `Dockerfile` in this directory, and
-[checkout_and_build_auto.py](https://github.com/NCAR/lrose-core/blob/master/build/checkout_and_build_auto.py) from the lrose-core/build directory.
+All you need is the `Dockerfile` and maybe the `build.sh` scripts from [https://github.com/nsf-lrose/docker_scripts](https://github.com/nsf-lrose/docker_scripts)
+
+In buid.sh, replace the **ORGANIZATION** and possibly **IMAGE** variables with your own.
 
 ## Build the image
 
-Copy both to a build directory, for example `~/build`, `cd` to it,
-then
-
-`docker build -t lrose-blaze .`
+./build.sh
 
 When all set and done, you should have the image on your
 system. Double check with
@@ -19,19 +17,26 @@ system. Double check with
 
 ## Export the image
 
-`docker export --output lrose-blaze.tgz`
+`docker export <image_ID> --output lrose-blaze.tgz`
 
 ## Copy it to another machine and import it
 
 `docker import lrose-blaze.tgz`
 
-## TODO
+## Building a custom image
 
-The generated image is quite large. Larger than one where I just
-installed the needed runtime libraries, and untarred an lrose
-distribution created in another image. I need to investigate the
-difference.
+The image generated with the given Dockerfile is a generic ubuntu image with just enough run-time libraries to support running lrose binaries.
 
+If you wanted to add more packages, create additional users... you can either add instructions to the Dockerfile, or follow these steps
+
+  * `docker run -it --name my_container /bin/bash`
+  * Unless you specified a user (-u, --user) you should be root.
+  * Add user(s), packages, ...
+  * exit
+  * `docker ps -a` to get your modified container ID
+  * `docker commit <container_ID> mycustomimage`
+  
+`docker images` should now list your *mycustomimage*
 
 
 
