@@ -15,12 +15,14 @@ print_help() {
     cat <<EOF
 
     -a|--argfile <file>		Specify a file that has additional options (default ~/.lroseargs)
-    		 		The file has one entry per line with #, =, and : serving as keywords
+    		 		The file has one entry per line with #, =, --, and : serving as keywords
     		 			# denotes a comment
 					= Is used to specify an environment variable
 					     foo=bar gets translated to -e foo=bar
 					: Is used to specify a volume mapping
 					     /from:/to gets translated to -v /from:/to
+                                       -- Denotes a raw argument
+                                             --whatever will be passed as is
 
     -h|--help			Print help and exit 
     -c|--container <name>	Use this container instead of the default lrose-container 
@@ -83,6 +85,7 @@ CONTAINER="lrose-container"
 ARG_FILE="$HOME/.lroseargs"
 VOLUME_ARGS=""
 ENV_ARGS=""
+RAW_ARGS=""
 
 debug=0
 run_flag=1
@@ -179,6 +182,10 @@ if [[ -r "$ARG_FILE" ]]; then
 	    *#*)
 		# Comment, do nothing
 		;;
+	    --*)
+		# Raw options
+		RAW_ARGS="$RAW_ARGS $line"
+		;;
 	    *:*)
 		# Volume mapping
  		VOLUME_ARGS="$VOLUME_ARGS -v $line"		
@@ -202,7 +209,8 @@ if [ "$debug" -eq 1 ]; then
     echo "REMOVE: $REMOVE"
     echo "ARG_FILE: $ARG_FILE"
     echo "VOLUME_ARGS: $VOLUME_ARGS"
-    echo "ENV_ARGS: $ENV_ARGS"    
+    echo "ENV_ARGS: $ENV_ARGS"
+    echo "RAW_ARGS: $RAW_ARGS"    
     echo "command invocation: $command $@"
 fi
 
@@ -220,7 +228,7 @@ print_msg $debug "id: '$cid', status: '$cstatus'"
 # Set up some docker options for the different state the container could be in
 
 docker_display_opts="$DISPLAY_OPT -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
-docker_run_opts="-t --name $CONTAINER --user lrose -w /home/lrose $ENV_ARGS"
+docker_run_opts="-t --name $CONTAINER --user lrose -w /home/lrose $ENV_ARGS $RAW_ARGS"
 docker_exec_opts="-t --user lrose -w /home/lrose $ENV_ARGS"
 
 docker_volume_opts=""
