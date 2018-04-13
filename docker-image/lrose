@@ -92,7 +92,7 @@ run_flag=1
 my_os=`uname`
 case $my_os in
     Linux)
-	DISPLAY_OPT="--env=\"DISPLAY\" --env QT_X11_NO_MITSHM=1"
+	DISPLAY_OPT="--env=DISPLAY --env QT_X11_NO_MITSHM=1"
 	;;	
     Darwin)
 	my_host=`hostname`
