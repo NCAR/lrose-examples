@@ -15,22 +15,24 @@ as root, you can specify **-u lrose** when you `docker run` or `docker exec`
 
 ### Getting the lrose-blaze image
 
-* From an official docker source (will we have that option?)
+* From hub.docker.com (the default repository for the docker command)
 
-   `docker pull lrose-blaze`
+   `docker pull nsflrose/lrose-blaze`
+   
+   This should pull the **latest** tag.
 
-* Download the image from (...) and install it
+* If you want to test a different image. For example ifyou have access to a tar file of the image
 
-   `docker import lroze-blaze`
+   `docker import lroze-blaze.tgz`
 
 Verify it is there with `docker images`
 
 ```
 $ docker images
-REPOSITORY          TAG                 IMAGE ID     
-lrose-blaze         latest              0a2ce9c9ae0f 
-ubuntu_apache2      latest              4b5eefbe9c6c 
-ncareol/soloii      latest              baa1ee4c3541
+REPOSITORY                   TAG                 IMAGE ID     
+nsflrose/lrose-blaze         04132018            0a2ce9c9ae0f 
+ubuntu_apache2               latest              4b5eefbe9c6c 
+ncareol/soloii               latest              baa1ee4c3541
 ```
 Chances are that instead of a name and tag, you will see **none**.
 Since the **lrose** wrapper assumes an image name of *lrose-blaze* you want to tag the image. Use the `docker tag` command to do that. (Replace **0a2ce9c9ae0f** with the image ID `docker images` shows you)
@@ -65,7 +67,7 @@ It supports volume, environment, and raw arguments. Add any combination, one opt
   * Comments start with **#**
   * /from:to is passed as **-v /from:/to**
   * var=value is passed as **-e var=value**
-  * -anything is pased as is
+  * --anything is pased unchanged **--anything**
   
 For the example above, you'd
 add an entry to map your data directory to /tmp/KHGX in the container.
