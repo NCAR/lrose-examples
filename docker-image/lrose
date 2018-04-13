@@ -80,7 +80,7 @@ container_status() {
 # A few default values that can be overwritten on the command line
 
 REMOVE="--rm"
-IMAGE=`docker images | grep nsflrose/lrose-blaze | awk '{ print $3; }'`
+IMAGE=`docker images | grep nsflrose/lrose-blaze | grep latest | awk '{ print $3; }'`
 CONTAINER="lrose-container"
 ARG_FILE="$HOME/.lroseargs"
 VOLUME_ARGS=""
