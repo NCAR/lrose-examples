@@ -147,7 +147,7 @@ do
 	    shift # past argument
 	    ;;
 	-v|--volume)
-	    VOLUME_ARGS="VOLUME_ARGS -v $2"
+	    VOLUME_ARGS="$VOLUME_ARGS -v $2"
 	    shift # past argument
 	    shift # past value
 	    ;;
