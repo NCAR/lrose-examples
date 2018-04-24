@@ -227,7 +227,7 @@ print_msg $debug "id: '$cid', status: '$cstatus'"
 
 # Set up some docker options for the different state the container could be in
 
-docker_display_opts="$DISPLAY_OPT -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
+docker_display_opts="$DISPLAY_OPT -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v $HOME/.Xauthority:/home/lrose/.Xauthority"
 docker_run_opts="-t --name $CONTAINER --user lrose -w /home/lrose $ENV_ARGS $RAW_ARGS"
 docker_exec_opts="-t --user lrose -w /home/lrose $ENV_ARGS"
 
