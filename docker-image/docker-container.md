@@ -93,6 +93,11 @@ when running a container.
 
   * Docker will try to mount volumes exactly as requested. The following will fail because you are trying to replace /tmp, not mount /home/myself under /tmp: **/home/myself:/tmp**. If you want to mount your home directory somewhere, you have to specify an absolute path. For example **/home/myself:/tmp/myself** or **/home/myself:/home/myself**.
   
+#### A few gotchas with the lrose wrapper ####
+
+  * The lrose wrapper is meant do run commands in **batch** bode. It doesn't handle the I/O required for interactive mode.
+  So if you were to do something like this: `./lrose -- /bin/bash`, the container would be started and run /bin/bash, but you would never get a shell prompt, and any command you enter would not be passed on. You would have to stop and remove the container before being able to run the lrose wrapper again.
+  
 ### Dealing with graphic accelerators ###
 
 This is only needed for X11 graphic programs such as HawkEye, if you care about hardware acceleration. If the performance is good enough you can skip this section.
