@@ -245,15 +245,23 @@ case "$cstatus" in
 	run_cmd $debug $run_flag docker start "$CONTAINER"
 	run_cmd $debug $run_flag docker exec $docker_exec_opts $CONTAINER $command "$@"
 	;;
+    Created)
+	echo "Removing existing container '$CONTAINER' that failed to run..."
+	docker rm "$CONTAINER"
+	print_msg $debug "Starting container"
+	run_cmd $debug $run_flag \
+		docker run $REMOVE $VOLUME_ARGS $docker_display_opts \
+		$docker_run_opts $IMAGE $command "$@"
+	;;
     *)
 	if [ ! -z "$cstatus" ]; then
 	    echo "Container '$CONTAINER' status not recognized '$cstatus'"
 	    exit 1
 	fi
 	print_msg $debug "Container doesn't exist. Starting one"
-	 run_cmd $debug $run_flag \
-		 docker run $REMOVE $VOLUME_ARGS $docker_display_opts \
-		 $docker_run_opts $IMAGE $command "$@"
+	run_cmd $debug $run_flag \
+		docker run $REMOVE $VOLUME_ARGS $docker_display_opts \
+		$docker_run_opts $IMAGE $command "$@"
 	;;
 esac
 
