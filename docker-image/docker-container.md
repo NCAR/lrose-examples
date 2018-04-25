@@ -78,15 +78,21 @@ container. For example:
 ```
 # Location of HawkEye input radar files
 /path/to/some/folder/KHGX:/tmp/KHGX
-# Output directory for lrose commands
-/my/path/to/large/disk:/tmp/output
-# I want to be able to access my home from inside the container
-/home/miko:/home/miko
+# Output directory for lrose commands. Make sure I have write access
+/my/path/to/large/disk:/tmp/output:rw
+# I want to be able to access my Linux home from inside the container
+/home/miko:/home/miko:rw
+# On a Mac it might look like this
+/Users/miko:/home/miko:rw
 ```
 
 The `lrose` wrapper will convert all of these to `--volume` options
 when running a container.
 
+#### A few gotchas with volume mounting ###
+
+  * Docker will try to mount volumes exactly as requested. The following will fail because you are trying to replace /tmp, not mount /home/myself under /tmp: **/home/myself:/tmp**. If you want to mount your home directory somewhere, you have to specify an absolute path. For example **/home/myself:/tmp/myself** or **/home/myself:/home/myself**.
+  
 ### Dealing with graphic accelerators ###
 
 This is only needed for X11 graphic programs such as HawkEye, if you care about hardware acceleration. If the performance is good enough you can skip this section.
