@@ -8,9 +8,10 @@ Use Docker images and RPM to package LROSE software for release.
 containers: centos-source + rpmbuild = centos-rmpbuilder
 directory:  RPM/first_try
 ```
-in RPM/first_try ...
-$ docker build --rm -t "centos-rpmbuilder" .
 
+in RPM/first_try ...
+```
+$ docker build --rm -t "centos-rpmbuilder" .
 ```
 
 # 2. Package LROSE using RPM and Docker container.
