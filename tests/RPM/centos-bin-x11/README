@@ -1,0 +1,5 @@
+
+Build the container for testing ...
+
+% cd RPM/centos-bin-x11
+% docker build -t "centos:bin-x11" .

@@ -1,0 +1,6 @@
+Dockerfile builds a version of centos with rpmbuild installed
+Use the centos-source container, which has all the packages needed to build lrose-blaze
+(see CI/test.../centos_source/README for info how to build the centos-source container).
+
+Here is the command to build the container for rpmbuilder ...
+$ docker build --rm -t "centos-rpmbuilder" .
