@@ -14,7 +14,7 @@ in RPM/first_try ...
 $ docker build --rm -t "centos-rpmbuilder" .
 ```
 
-# 2. Package LROSE using RPM and Docker container.
+# 2. Package LROSE using RPM and Docker container
 
 ```
 containers: centos-rpmbuilder 
@@ -110,18 +110,18 @@ directory:   ~/RPM/centos-bin-x11
 ```
 
 I need to extract the package from the container ...  <---
-docker run --rm -it -v ~/RPM/first_try/centos-rpmbuild:/tmp/out mytest_rpm
+```
+$ docker run --rm -it -v ~/RPM/first_try/centos-rpmbuild:/tmp/out mytest_rpm
+```
 then ...
+```
 cp RPMS/x86_64/lrose-blaze-20180516.x86_64.rpm /tmp/out/.
+```
 
-The naming is off ... rpmbuild makes ... lrose-20180516-blaze.x86_64.rpm, so I need to switch the version and release names <--- DONE
-
-Test by installing into a clean container??
-Nothing happens.  I think there needs to be something in the %install part of the spec file.
-Oh, I also think I need to add the files in /home/rpmbuilder/mytemploc into the %files section of the spec file.
-
+```
 $ docker run --rm -it -v ~/RPM/first_try/centos-rpmbuild:/tmp/in centos
 % rpm -i lrose-blaze-20180516.x86_64.rpm 
+```
 
 old version ... 
 ```
@@ -166,6 +166,10 @@ If in the %build section, then the binaries, libraries, includes, etc. must be m
 If root is the user building the rpm, then the files are installed in /usr/local/lrose (How to get these into the RPM?)
 If a user is building the rpm, then the files are installed in the --prefix location. (How to get these into the RPM?)
 The %files are relative to the %{buildroot} location. 
+
+Test by installing into a clean container??
+Nothing happens.  I think there needs to be something in the %install part of the spec file.
+Oh, I also think I need to add the files in /home/rpmbuilder/mytemploc into the %files section of the spec file.
 
 ### Q: How is the Prefix: variable used?
 
@@ -2139,6 +2143,7 @@ ok, now build rpm in a container
 
 Here is the Dockerfile to build the rpm; it is exported to the directory in which it is started.
 
+```
 [eol-albireo:~/RPM/first_try/centos-rpmbuild] brenda% more Dockerfile
 #
 # start with an image that contains all the packages needed to 
@@ -2179,16 +2184,17 @@ RUN cp /tmp/bj/lrose-blaze-20180516.src.tgz SOURCES/lrose-blaze-20180516.src.tgz
 #
 RUN rsync RPMS /tmp/rpm_files/RPMS
 
--------
+```
 
 #### this builds the container; compiles the source code; packages the code into an RPM
+```
 [eol-albireo:~/RPM/first_try/centos-rpmbuild] brenda% docker build --rm -t "mytest_rpm" .
 
 [eol-albireo:~/RPM/first_try/centos-rpmbuild] brenda% docker run --rm -it -v ~/RPM/first_try/centos-rpmbuild:/tmp/out mytest_rpm
 
 [root@bedafd04ecb7 bj]# cp -R  RPMS /tmp/out 
 [root@bedafd04ecb7 bj]# exit
-
+```
 ### Now, move the RPM into a clean container, install it and then test it ...
 
 ```
