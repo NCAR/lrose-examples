@@ -2,7 +2,6 @@ pipeline {
   agent {
     docker {
       image 'centos'
-      label 'myhelloworld'
       args '-v /tmp:/tmp'
     }
   }
