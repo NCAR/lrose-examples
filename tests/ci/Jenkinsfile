@@ -1,14 +1,13 @@
 pipeline {
-  agent {
-    docker {
-      image 'centos'
+    agent {
+        docker { image 'node:7-alpine' }
     }
-  }
-  stages {
-    stage('Stage 1') {
-      steps {
-        sh 'echo "Hello World!"'
-      }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+            }
+        }
     }
-  }
 }
+
