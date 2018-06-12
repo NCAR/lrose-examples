@@ -101,10 +101,16 @@ build ... console ...
 
 DONE. Try running Jenkins as a container in Docker ...
 
+#### docker
 
-docker
-Execute the Pipeline, or stage, with the given container which will be dynamically provisioned on a node pre-configured to accept Docker-based Pipelines, or on a node matching the optionally defined label parameter. docker also optionally accepts an args parameter which may contain arguments to pass directly to a docker run invocation, and an alwaysPull option, which will force a docker pull even if the image name is already present. For example: agent { docker 'maven:3-alpine' } or
+Execute the Pipeline, or stage, with the given container which will be dynamically provisioned on a node pre-configured to accept Docker-based Pipelines, or on a node matching the optionally defined label parameter. docker also optionally accepts an args parameter which may contain arguments to pass directly to a docker run invocation, and an alwaysPull option, which will force a docker pull even if the image name is already present. For example:
 
+```
+ agent { docker 'maven:3-alpine' } 
+```
+or
+
+```
 agent {
     docker {
         image 'maven:3-alpine'
@@ -112,9 +118,23 @@ agent {
         args  '-v /tmp:/tmp'
     }
 }
-dockerfile
-Execute the Pipeline, or stage, with a container built from a Dockerfile contained in the source repository. In order to use this option, the Jenkinsfile must be loaded from either a Multibranch Pipeline, or a "Pipeline from SCM." Conventionally this is the Dockerfile in the root of the source repository: agent { dockerfile true }. If building a Dockerfile in another directory, use the dir option: agent { dockerfile { dir 'someSubDir' } }. If your Dockerfile has another name, you can specify the file name with the filename option. You can pass additional arguments to the docker build ... command with the additionalBuildArgs option, like agent { dockerfile { additionalBuildArgs '--build-arg foo=bar' } }. For example, a repository with the file build/Dockerfile.build, expecting a build argument version:
+```
 
+#### dockerfile
+
+Execute the Pipeline, or stage, with a container built from a Dockerfile contained in the source repository. In order to use this option, the Jenkinsfile must be loaded from either a Multibranch Pipeline, or a "Pipeline from SCM." Conventionally this is the Dockerfile in the root of the source repository: 
+```
+agent { dockerfile true }. 
+```
+If building a Dockerfile in another directory, use the dir option: 
+```
+agent { dockerfile { dir 'someSubDir' } }
+```
+If your Dockerfile has another name, you can specify the file name with the filename option. You can pass additional arguments to the docker build ... command with the additionalBuildArgs option, like 
+``` agent { dockerfile { additionalBuildArgs '--build-arg foo=bar' } }. ```
+For example, a repository with the file build/Dockerfile.build, expecting a build argument version:
+
+```
 agent {
     // Equivalent to "docker build -f Dockerfile.build --build-arg version=1.0.2 ./build/
     dockerfile {
@@ -124,6 +144,9 @@ agent {
         additionalBuildArgs  '--build-arg version=1.0.2'
     }
 }
+```
+
+The problem is jenkins user doesn't have permission to contact the docker daemon. 
 
 ```
 docker exec -it 0a8499c63e904274fca49b7c42112e5418da8ae030e2a42e6d0d4d67591170ce  bash
