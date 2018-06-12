@@ -8,6 +8,7 @@ Use Docker images and RPM to package LROSE software for release.
 containers: centos-source + rpmbuild = centos-rmpbuilder
 directory:  RPM/first_try
 ```
+[How to build centos-source container.](../CIJenkins/README_CI_JENKINS.md)
 
 in RPM/first_try with [Dockerfile](first_try/Dockerfile) ...
 ```
@@ -231,6 +232,7 @@ ierror: File not found: /root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64/usr
 ### also, use -bp for %prep only; -bc for %build only; -bi for %install only
 
 ### After the %build step ...
+```
 [rpmbuilder@d8f628101381 ~]$ ls -R  rpmbuild 
 rpmbuild:
 BUILD  BUILDROOT  RPMS  SOURCES  SPECS  SRPMS
@@ -553,7 +555,7 @@ rpmbuild/SOURCES:
 rpmbuild/SPECS:
 
 rpmbuild/SRPMS:
-[rpmbuilder@d8f628101381 ~]$ 
+```
 
 ## Ok, make a small test case and figure out the %files thing. 
 
@@ -761,6 +763,7 @@ rm -rf %{buildroot}/usr/src
 ## try to list the offending files with an '%exclude' macro -- didn't work; still included them. GRHH!
 
 ## try to list only the file name ...
+```
 %exclude lrose-blaze-20180516.x86_64
 
 -------
@@ -791,17 +794,19 @@ error: Bad exit status from /var/tmp/rpm-tmp.fp7OdY (%install)
 ## try without prefix, then move /usr/local/lrose to ${buildroot} ?? I'll need to build rpm as root so the path is
 mkdir -p            /root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64/usr/local
 rsync /usr/local/lrose /root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64/usr/local
+```
 
-
+```
 => if build_src_release is in %install, then when processing %file, none of the files are found ...
     File not found: /root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64/usr/local/lrose/include/h5d_provisional.mod
-
+```
 
 ---------
 
 6/4/2018
 
 Spec file for root:
+```
 [root@1a93e23f402f bj]# cat SPECS/lrose-blaze.spec 
 %define _topdir     /tmp/bj
 %define name        lrose 
@@ -835,9 +840,10 @@ mkdir -p %{buildroot}/usr/local/lrose
 
 %files
 /usr/local/lrose
+```
 ----- 
 result:
-
+```
 + mkdir -p /root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64/usr/local/lrose
 + rsync -r /usr/local/lrose /root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64/usr/local
 skipping non-regular file "lrose/lib/libFmq.so"
@@ -857,8 +863,9 @@ error: Bad exit status from /var/tmp/rpm-tmp.W4WyQ1 (%install)
 
 RPM build errors:
     Bad exit status from /var/tmp/rpm-tmp.W4WyQ1 (%instal
+```
 ------------
-
+```
 with this spec file ...
 %define _topdir     /tmp/bj
 %define name        lrose
@@ -891,14 +898,16 @@ rsync -r /usr/local/lrose %{buildroot}/usr/local
 
 %files
 /usr/local/lrose
+```
 -----------
 result:
-
+```
 skipping non-regular file "lrose/share/doc/udunits/udunits2.xml"
 + /usr/lib/rpm/find-debuginfo.sh --strict-build-id -m --run-dwz --dwz-low-mem-die-limit 10000000 --dwz-max-die-limit 110000000 /tmp/bj/BUILD/lrose-blaze-20180516.src
 extracting debug info from /root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64/usr/local/lrose/bin/h5repart
 Dest dir longer than base dir is not supported
 error: Bad exit status from /var/tmp/rpm-tmp.zZ8FYr (%install)
+```
 ------
 
 ok, try adding the list of files to the spec file ...
@@ -914,6 +923,7 @@ buildroot=/root/rpmbuild/BUILDROOT/lrose-blaze-20180516.x86_64
 -----
 
 this version of the spec file worked ...
+```
 %define _topdir     /tmp/bj
 %define name        lrose 
 %define release     20180516
@@ -947,25 +957,28 @@ mkdir -p %{buildroot}/usr/local/lrose
 rsync -ra /usr/local/lrose %{buildroot}/usr/local
 
 %files -f %{_topdir}/SPECS/lrose-pkg-files
+```
 ...
 ----------
 
 rpm build command:
-
+## ```  --define "debug_package %{nil}" ```
+```
 rpmbuild -v -bb --define "debug_package %{nil}" SPECS/lrose-blaze.spec  <<<---- the debug_package option did the trick!
-
+```
 check build:
+```
 rpm -Vp RPMS/x86_64/lrose-blaze-20180516.x86_64.rpm 
 
 rpm install command:
 rpm -i lrose-blaze-20180516.x86_64.rpm
 rpm install; ignoring conflicts
 rpm -i --force 
-
+```
 
 -------
-this works; just needed to add -a to rsync to include symbolic links
-
+## this works; just needed to add -a to rsync to include symbolic links
+```
 more SPECS/lrose-blaze.spec 
 %define _topdir     /tmp/bj
 %define name        lrose 
@@ -1000,7 +1013,7 @@ mkdir -p %{buildroot}/usr/local/lrose
 rsync -ra /usr/local/lrose %{buildroot}/usr/local
 
 %files -f %{_topdir}/SPECS/lrose-pkg-files
-
+```
 -----------
 
 ### Q: does just /usr/local/lrose work? Yes
@@ -2383,109 +2396,7 @@ just add this to the build_src_release.py script ...
 I could just do this in the Dockerfile ...
 shellCmd("rsync -av share " + installDir)
 
-Instead, try using checkout_and_build_auto.py script.  This is the script used to
+## TODO: Instead, try using checkout_and_build_auto.py script.  This is the script used to
 build the docker container for running lrose.
- 
-```
-Jenkinsfile (Declarative Pipeline)
-pipeline {
-    // agent any 
-    agent {
-        docker { image 'node:7-alpine' }  <<---- Note! an agent is a docker container; the stages are run in this container
-    }
-    stages {
-        stage('Build') { 
-            steps {
-                //  sh 'echo "building lrose-blaze"'
-            }
-        }
-        stage('Test') { 
-            steps {
-                // 
-            }
-        }
-        stage('Deploy') {   // make an rpm and install it on a clean image
-            steps {
-                // 
-            }
-        }
-    }
-    post {
-        always {
-            echo 'This will always run'
-        }
-        success {
-            echo 'This will run only if successful'
-        }
-        failure {
-            echo 'This will run only if failed'
-        }
-        unstable {
-            echo 'This will run only if the run was marked as unstable'
-        }
-        changed {
-            echo 'This will run only if the state of the Pipeline has changed'
-            echo 'For example, if the Pipeline was previously failing but is now successful'
-        }
-    }
-}
-```
-
-run jenkins as a container in Docker ...
-The recommended docker image is jenkinsci/blueocean
-
-```
-docker run \
-  --rm \
-  -u root \
-  -p 8080:8080 \
-  -v jenkins-data:/var/jenkins_home \ 
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v "$HOME":/home \ 
-  jenkinsci/blueocean
-```
-I modified the above command to ...
-```
-docker run \
-  --rm 
-  --name jenkins-blueocean \
-  -u root \
-  -p 8083:8080 \
-  -v jenkins-data:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  jenkinsci/blueocean
-```
-
-command-line interface to jenkins ...
-build ... console ... 
-
-DONE. Try running Jenkins as a container in Docker ...
 
 
-docker
-Execute the Pipeline, or stage, with the given container which will be dynamically provisioned on a node pre-configured to accept Docker-based Pipelines, or on a node matching the optionally defined label parameter. docker also optionally accepts an args parameter which may contain arguments to pass directly to a docker run invocation, and an alwaysPull option, which will force a docker pull even if the image name is already present. For example: agent { docker 'maven:3-alpine' } or
-
-agent {
-    docker {
-        image 'maven:3-alpine'
-        label 'my-defined-label'
-        args  '-v /tmp:/tmp'
-    }
-}
-dockerfile
-Execute the Pipeline, or stage, with a container built from a Dockerfile contained in the source repository. In order to use this option, the Jenkinsfile must be loaded from either a Multibranch Pipeline, or a "Pipeline from SCM." Conventionally this is the Dockerfile in the root of the source repository: agent { dockerfile true }. If building a Dockerfile in another directory, use the dir option: agent { dockerfile { dir 'someSubDir' } }. If your Dockerfile has another name, you can specify the file name with the filename option. You can pass additional arguments to the docker build ... command with the additionalBuildArgs option, like agent { dockerfile { additionalBuildArgs '--build-arg foo=bar' } }. For example, a repository with the file build/Dockerfile.build, expecting a build argument version:
-
-agent {
-    // Equivalent to "docker build -f Dockerfile.build --build-arg version=1.0.2 ./build/
-    dockerfile {
-        filename 'Dockerfile.build'
-        dir 'build'
-        label 'my-defined-label'
-        additionalBuildArgs  '--build-arg version=1.0.2'
-    }
-}
-
-```
-docker exec -it 0a8499c63e904274fca49b7c42112e5418da8ae030e2a42e6d0d4d67591170ce  bash
-
-```
