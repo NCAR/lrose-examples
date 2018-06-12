@@ -1,7 +1,25 @@
 
 I’m thinking about using standard docker containers as clean starting points for testing installation and running of the lrose releases.
 
-Continuous integration and deployment [DevOps] with docker containers…
+### Build centos-source container
+
+make a docker base image with all the packages needed to build LROSE-Blaze.
+Here is the command to build the container ...
+
+```
+% docker build —rm -t "centos-source:Dockerfile" -f centos-source.Dockerfile
+% xhost +128.117.80.109:0
+% docker run -ti --rm -e DISPLAY=128.117.80.109:0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw centos:7
+[root@1fe1ed5e89bb /]# history
+    1  yum install -y xorg-x11-server-Xorg xorg-x11-xauth xorg-x11-apps
+    2  xclock&
+    3  history
+[1]+  Done                    xclock
+```
+
+and here is the [Dockerfile](Dockerfile)
+
+## Continuous integration and deployment [DevOps] with docker containers…
 
 https://www.digitalocean.com/community/tutorials/how-to-configure-a-continuous-integration-testing-environment-with-docker-and-docker-compose-on-ubuntu-14-04
 
@@ -111,26 +129,5 @@ agent {
 docker exec -it 0a8499c63e904274fca49b7c42112e5418da8ae030e2a42e6d0d4d67591170ce  bash
 
 ```
-
-
-
-### Build centos-source container 
-
-make a docker base image with all the packages needed to build LROSE-Blaze.
-Here is the command to build the container ...
-
-```
-% docker build —rm -t "centos-source:Dockerfile" -f centos-source.Dockerfile 
-% xhost +128.117.80.109:0
-% docker run -ti --rm -e DISPLAY=128.117.80.109:0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw centos:7
-[root@1fe1ed5e89bb /]# history
-    1  yum install -y xorg-x11-server-Xorg xorg-x11-xauth xorg-x11-apps
-    2  xclock&
-    3  history
-[1]+  Done                    xclock
-```
-
-and here is the [Dockerfile](Dockerfile)
-
 
 
