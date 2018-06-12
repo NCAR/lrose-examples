@@ -99,7 +99,9 @@ docker run \
 command-line interface to jenkins ...
 build ... console ...
 
-DONE. Try running Jenkins as a container in Docker ...
+Try running Jenkins as a container in Docker ... DONE.
+
+Now, try Jenkins performing an lrose build inside a container.
 
 #### docker
 
@@ -146,7 +148,7 @@ agent {
 }
 ```
 
-The problem is jenkins user doesn't have permission to contact the docker daemon. 
+## STUCK HERE: The problem is jenkins user doesn't have permission to contact the docker daemon. 
 
 ```
 docker exec -it 0a8499c63e904274fca49b7c42112e5418da8ae030e2a42e6d0d4d67591170ce  bash
