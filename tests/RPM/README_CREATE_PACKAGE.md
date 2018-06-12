@@ -9,7 +9,7 @@ containers: centos-source + rpmbuild = centos-rmpbuilder
 directory:  RPM/first_try
 ```
 
-in RPM/first_try ...
+in RPM/first_try with [Dockerfile](first_try/Dockerfile) ...
 ```
 $ docker build --rm -t "centos-rpmbuilder" .
 ```
@@ -2382,4 +2382,110 @@ just add this to the build_src_release.py script ...
 
 I could just do this in the Dockerfile ...
 shellCmd("rsync -av share " + installDir)
-???
+
+Instead, try using checkout_and_build_auto.py script.  This is the script used to
+build the docker container for running lrose.
+ 
+```
+Jenkinsfile (Declarative Pipeline)
+pipeline {
+    // agent any 
+    agent {
+        docker { image 'node:7-alpine' }  <<---- Note! an agent is a docker container; the stages are run in this container
+    }
+    stages {
+        stage('Build') { 
+            steps {
+                //  sh 'echo "building lrose-blaze"'
+            }
+        }
+        stage('Test') { 
+            steps {
+                // 
+            }
+        }
+        stage('Deploy') {   // make an rpm and install it on a clean image
+            steps {
+                // 
+            }
+        }
+    }
+    post {
+        always {
+            echo 'This will always run'
+        }
+        success {
+            echo 'This will run only if successful'
+        }
+        failure {
+            echo 'This will run only if failed'
+        }
+        unstable {
+            echo 'This will run only if the run was marked as unstable'
+        }
+        changed {
+            echo 'This will run only if the state of the Pipeline has changed'
+            echo 'For example, if the Pipeline was previously failing but is now successful'
+        }
+    }
+}
+```
+
+run jenkins as a container in Docker ...
+The recommended docker image is jenkinsci/blueocean
+
+```
+docker run \
+  --rm \
+  -u root \
+  -p 8080:8080 \
+  -v jenkins-data:/var/jenkins_home \ 
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$HOME":/home \ 
+  jenkinsci/blueocean
+```
+I modified the above command to ...
+```
+docker run \
+  --rm 
+  --name jenkins-blueocean \
+  -u root \
+  -p 8083:8080 \
+  -v jenkins-data:/var/jenkins_home \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  jenkinsci/blueocean
+```
+
+command-line interface to jenkins ...
+build ... console ... 
+
+DONE. Try running Jenkins as a container in Docker ...
+
+
+docker
+Execute the Pipeline, or stage, with the given container which will be dynamically provisioned on a node pre-configured to accept Docker-based Pipelines, or on a node matching the optionally defined label parameter. docker also optionally accepts an args parameter which may contain arguments to pass directly to a docker run invocation, and an alwaysPull option, which will force a docker pull even if the image name is already present. For example: agent { docker 'maven:3-alpine' } or
+
+agent {
+    docker {
+        image 'maven:3-alpine'
+        label 'my-defined-label'
+        args  '-v /tmp:/tmp'
+    }
+}
+dockerfile
+Execute the Pipeline, or stage, with a container built from a Dockerfile contained in the source repository. In order to use this option, the Jenkinsfile must be loaded from either a Multibranch Pipeline, or a "Pipeline from SCM." Conventionally this is the Dockerfile in the root of the source repository: agent { dockerfile true }. If building a Dockerfile in another directory, use the dir option: agent { dockerfile { dir 'someSubDir' } }. If your Dockerfile has another name, you can specify the file name with the filename option. You can pass additional arguments to the docker build ... command with the additionalBuildArgs option, like agent { dockerfile { additionalBuildArgs '--build-arg foo=bar' } }. For example, a repository with the file build/Dockerfile.build, expecting a build argument version:
+
+agent {
+    // Equivalent to "docker build -f Dockerfile.build --build-arg version=1.0.2 ./build/
+    dockerfile {
+        filename 'Dockerfile.build'
+        dir 'build'
+        label 'my-defined-label'
+        additionalBuildArgs  '--build-arg version=1.0.2'
+    }
+}
+
+```
+docker exec -it 0a8499c63e904274fca49b7c42112e5418da8ae030e2a42e6d0d4d67591170ce  bash
+
+```
