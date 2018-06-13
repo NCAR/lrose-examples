@@ -8,6 +8,9 @@ FROM centos-rpmbuilder
 #
 ADD . /tmp/rpm_files
 
+RUN yum -y install git
+RUN yum -y install libtool
+
 # create user rpmbuilder
 #RUN useradd -ms /bin/bash rpmbuilder 
 #USER rpmbuilder

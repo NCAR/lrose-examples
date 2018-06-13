@@ -13,6 +13,7 @@ Release:        %{release}
 Source:         %{name}-%{version}-%{release}.src.tgz
 Prefix:         /usr/local/lrose
 Group:          Scientific Tools
+AutoReqProv:    no
  
 %description
 LROSE - Lidar Radar Open Software Environment
@@ -21,13 +22,14 @@ LROSE - Lidar Radar Open Software Environment
 %setup -q -n lrose-blaze-20180516.src
  
 %build
-./build_src_release.py
+./build/checkout_and_build_auto.py  --package=lrose-blaze 
 rm -f %{_topdir}/SPECS/lrose-pkg-files
-find /usr/local/lrose -type d > %{_topdir}/SPECS/lrose-pkg-files
-find /usr/local/lrose -type l >> %{_topdir}/SPECS/lrose-pkg-files
+# find /usr/local/lrose -type d | sed 's/usr/duck/'
+find /root/lrose -type d | sed 's/root/usr\/local/' > %{_topdir}/SPECS/lrose-pkg-files
+find /root/lrose -type l | sed 's/root/usr\/local/' >> %{_topdir}/SPECS/lrose-pkg-files
 
 %install
 mkdir -p %{buildroot}/usr/local/lrose
-rsync -ra /usr/local/lrose %{buildroot}/usr/local
+rsync -ra /root/lrose %{buildroot}/usr/local
 
 %files -f %{_topdir}/SPECS/lrose-pkg-files

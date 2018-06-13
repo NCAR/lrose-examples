@@ -2396,7 +2396,69 @@ just add this to the build_src_release.py script ...
 I could just do this in the Dockerfile ...
 shellCmd("rsync -av share " + installDir)
 
-## TODO: Instead, try using checkout_and_build_auto.py script.  This is the script used to
-build the docker container for running lrose.
+## TODO: Instead, try using checkout_and_build_auto.py script.  
+
+This is the script to build the docker container for running lrose.
+
+In the spec file,
+substitute ./build_src_release.py for
+checkout_and_build_auto.py.
+
+The interesting thing is, the entire lrose project must be checked out before we can run checkout_and_build_auto.py and the first thing
+the script does is clone the repository (creating a copy of the lrose project). 
+
+
+Failed. The checkout_and_build_auto.py needs libtool.
+
+
+Finally, made it to installing the rpm ...
+Now install the RPM into clean container ... centos:bin-x11 ...
+```
+docker run -ti --rm -e DISPLAY=128.117.80.109:0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v ~/RPM/first_try/centos-rpmbuild:/tmp/rpms centos:bin-x11
+```
+
+inside container ...
+```
+rpm -i /tmp/rpms/RPMS/x86_64/lrose-blaze-20180516.x86_64.rpm
+```
+
+--------
+This is not needed ...
+Note: I needed to install perl as well.
+
+```
+[root@1dbc2077bd06 bj]# rpm -i /tmp/rpms/RPMS/x86_64/lrose-blaze-20180516.x86_64.rpm
+error: Failed dependencies:
+	ld-linux-x86-64.so.2(GLIBC_PRIVATE)(64bit) is needed by lrose-blaze-20180516.x86_64
+	libc.so.6(GLIBC_PRIVATE)(64bit) is needed by lrose-blaze-20180516.x86_64
+	libpthread.so.0(GLIBC_PRIVATE)(64bit) is needed by lrose-blaze-20180516.x86_64
+```
+Stuck here, trying to install glibc, etc and it says ...
+```
+Package glibc-2.17-222.el7.x86_64 already installed and latest version
+```
+End of section not needed 
+---------
+
+Ok, I added 
+``` 
+AutoReqProv: no
+``` 
+to the spec file and now the failed dependencies no longer cause a problem at installation.
+I can run RadxPrint, but running HawkEye leads to this error ...
+```
+This application failed to start because it could not find or load the Qt platform plugin "xcb"
+in "".
+```
+
+## Finally, HawkEye works!
+I needed to add these commands to the setup of the centos:bin-x11
+```
+   13  yum -y install qt5-qtbase
+   14  /usr/local/lrose/bin/HawkEye
+   15  dbus-uuidgen > /etc/machine-id
+```
+
+I think I'll go back to the original build script and just add the checkout of lrose-displays, then copy the files to share, etc.
 
 
