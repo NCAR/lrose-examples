@@ -2461,4 +2461,26 @@ I needed to add these commands to the setup of the centos:bin-x11
 
 I think I'll go back to the original build script and just add the checkout of lrose-displays, then copy the files to share, etc.
 
+### Dealing with the date string in the release name
+
+I need to bootstrap the build process.  I need to have ./build/checkout_and_build_auto.py somewhere that rpmbuild can access it.  (TODO)
+
+Ok, here are the steps ...
+1.  ``` RPM/first_try/centos-rpmbuild] brenda% docker build --rm -t "mytest_rpm" . ```
+
+2.  Open the container and extract the RPM.
+```
+Successfully tagged mytest_rpm:latest
+[eol-albireo:RPM/first_try/centos-rpmbuild] brenda% docker run --rm -it -v ~/RPM/first_try/centos-rpmbuild:/tmp/out mytest_rpm
+[root@447d19474c7d bj]# cp -R RPMS /tmp/out
+[root@447d19474c7d bj]# exit
+```
+
+3. Install RPM in clean container and try HawkEye.
+```
+[eol-albireo:RPM/first_try/centos-rpmbuild] brenda% docker run -ti --rm -e DISPLAY=128.117.80.109:0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v ~/RPM/first_try/centos-rpmbuild:/tmp/rpms centos:bin-x11
+[root@dbb870b1a6d1 bj]# rpm -i /tmp/rpms/RPMS/x86_64/lrose-blaze-20180614.x86_64.rpm
+[root@dbb870b1a6d1 bj]# /usr/local/lrose/bin/HawkEye 
+```
+A HawkEye window should start.
 
