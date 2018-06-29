@@ -29,7 +29,7 @@ The command is ...
 ~/RPM/first_try/centos-rpmbuild] brenda% docker build --rm -t "mytest_rpm" .
 ```
 
-# 3. Now, how to test the package??
+# 3. Test the package
 
 ```
 containers:  centos:bin-x11
