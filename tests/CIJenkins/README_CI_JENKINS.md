@@ -154,5 +154,30 @@ agent {
 docker exec -it 0a8499c63e904274fca49b7c42112e5418da8ae030e2a42e6d0d4d67591170ce  bash
 
 ```
+## moving on in a different direction 
 
+build docker image for continuous integration, on Mac in ~/CI/test_lrose_blaze/Jenkins:
 
+```
+docker build --rm -t "centos-jenkins-base" -f centos-jenkins-base.Dockerfile .
+```
+
+centos-jenkins-base.Dockerfile:
+```
+#
+# start with an image that contains all the packages needed to 
+# build lrose 
+#
+FROM centos-source:Dockerfile
+
+ADD . /tmp/bj
+ 
+RUN yum -y install git
+RUN yum -y install libtool
+
+# These will be run by Jenkins script ...
+# RUN  cd /tmp/bj; tar xvfz lrose-blaze-20180516.src.tgz  
+# The distribution will be unpacked into a subdirectory:
+
+# RUN /tmp/bj/lrose-blaze-20180516.src/build/checkout_and_build_auto.py --package lrose-blaze --prefix /usr/local/lrose --clean
+```
