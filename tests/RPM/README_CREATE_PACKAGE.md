@@ -19,91 +19,17 @@ $ docker build --rm -t "centos-rpmbuilder" .
 
 ```
 containers: centos-rpmbuilder 
-directory:  RPM/first_try/centos-rpmbuild/RPMS
+directory:  RPM/first_try/centos-rpmbuild
 ```
 
 [Dockerfile](first_try/centos-rpmbuild/Dockerfile) and [rpm spec file](first_try/centos-rpmbuild/lrose-blaze.spec)
-
-```
-#
-# start with an image that contains all the packages needed to 
-# build lrose-blaze + rpmbuilder
-#
-FROM centos-rpmbuilder
-
-ADD ??? /home/rpmbuilder 
-
-# create user rpmbuilder
-RUN useradd -ms /bin/bash rpmbuilder 
-USER rpmbuilder
-WORKDIR /home/rpmbuilder
-
-# build hierarchy for rpmbuild:
-RUN cd ~
-RUN mkdir lrose_blaze
-RUN cd lrose_blaze 
-RUN mkdir BUILD RPMS SOURCES SPECS SRPMS
-RUN cd SOURCES
-# ------- not tested ------
-RUN git clone https://github.com/NCAR/lrose-core   <---- need to install git
-#
-RUN ./build/create_src_release.py --package=lrose-blaze
-RUN mv ~/releases/tmp/lrose-blaze-20180516.src.tgz ~/SOURCES/.
-RUN cd ..
-# ------ end not tested --------
-#
-RUN rpmbuild -v -bb --clean SPECS/lrose-blaze.spec
-```
-
-#### The spec file for rpmbuild ...
-
-```
-[rpmbuilder@0d7c04aff58b ~]$ cat  SPECS/lrose-blaze.spec 
-%define _topdir     /home/rpmbuilder
-%define name        lrose 
-%define release     blaze
-%define version     20180516 
-%define buildroot %{_topdir}/%{name}-%{release}-%{version}-root
- 
-BuildRoot:  %{buildroot}
-Summary:        LROSE
-License:        BSD LICENSE
-Name:           %{name}
-Version:        %{version}
-Release:        %{release}
-Source:         %{name}-%{release}-%{version}.src.tgz
-Prefix:         /usr/local/lrose
-Group:          Scientific Tools
- 
-%description
-LROSE - Lidar Radar Open Software Environment
- 
-%prep
-%setup -q -n lrose-blaze-20180516.src
-
-%build
-sudo ./build_src_release.py
- 
-%install
- 
-%files
-%defattr(-,root,root)
-```
-This causes an error when creating the /usr/local/lrose directory when building.  Is this because the command builds AND installs the software?
-Do I need to separate the build from the install?  With a separate install, then the issue of access is avoided until the package is installed
-via rpm?
-
-Maybe, try build_src_release.py with --prefix=/some/alternate/location
-then for %install, use move command??
---prefix /home/rpmbuilder/mytemploc  seems to work
-Yep, that worked.  
 
 The command is ...
 ```
 ~/RPM/first_try/centos-rpmbuild] brenda% docker build --rm -t "mytest_rpm" .
 ```
 
-# 3. Now, how to test the package??
+# 3. Test the package
 
 ```
 containers:  centos:bin-x11
@@ -119,45 +45,18 @@ then ...
 cp RPMS/x86_64/lrose-blaze-20180516.x86_64.rpm /tmp/out/.
 ```
 
+Test - install the RPM and run sanity tests on RadxPrint, Convert, 2Grid, HawkEye
+
 ```
-$ docker run --rm -it -v ~/RPM/first_try/centos-rpmbuild:/tmp/in centos
-% rpm -i lrose-blaze-20180516.x86_64.rpm 
+$ xhost +<host ip address>
+$ docker run -ti --rm -e DISPLAY=<host ip address>:0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw ~/RPM/first_try/centos-rpmbuild:/tmp/in centos:bin-x11
+% cd /tmp/in
+% rpm -i lrose-blaze-yyyymmdd.x86_64.rpm 
+%  /usr/local/lrose/bin/RadxPrint -h	# parameters should be printed to terminal
+% /usr/local/lrose/bin/HawkEye		# HawkEye GUI should pop up
+
 ```
 
-old version ... 
-```
-[eol-albireo:~/RPM/first_try/centos-rpmbuild] brenda% more lrose-blaze.spec
-%define _topdir     /home/rpmbuilder
-%define name        lrose 
-%define release     blaze
-%define version     yyyymmdd 
-%define buildroot %{_topdir}/%{name}-%{version}-root
- 
-BuildRoot:  %{buildroot}
-Summary:        LROSE
-License:        BSD LICENSE
-Name:           %{name}
-Version:        %{version}
-Release:        %{release}
-Source:         %{name}-%{version}.tar.gz
-Prefix:         /usr/local/lrose
-Group:          Scientific Tools
- 
-%description
-LROSE - Lidar Radar Open Software Environment
- 
-%prep
-%setup -q
- 
-%build
-./lrose-blaze-20180516.src/build_src_release.py
- 
-%install
-make install prefix=$RPM_BUILD_ROOT/usr
- 
-%files          <---  Looks in %{buildroot} for the files listed here
- 
-```
 ## Design Decisions
 
 ### Where to run "build_src_release.py"? In the %build or the %install?
