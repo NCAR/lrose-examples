@@ -99,7 +99,10 @@ docker run \
 command-line interface to jenkins ...
 build ... console ...
 
-Try running Jenkins as a container in Docker ... DONE.
+Try running Jenkins as a container in Docker ... 
+```
+[eol-albireo:~] brenda% docker run --rm --name jenkins-blueocean -u root -p 8083:8080 -v jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/blueocean
+```
 
 Now, try Jenkins performing an lrose build inside a container.
 
