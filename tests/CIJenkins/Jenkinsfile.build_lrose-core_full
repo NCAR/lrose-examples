@@ -1,0 +1,44 @@
+pipeline {
+  
+    agent {
+        docker { 
+            image 'centos-jenkins-base:latest' 
+        }
+    }
+    
+    environment {
+        LD_LIBRARY_PATH = '/usr/local/lrose/lib'
+        // setting the PATH doesn't seem to work 
+        PATH = "/usr/local/lrose/bin:$PATH"  
+    }
+    
+    stages {
+        stage('Fetch and Build') {
+            steps {
+                sh 'cd /tmp/bj; wget https://raw.githubusercontent.com/NCAR/lrose-core/master/build/checkout_and_build_auto.py'
+                sh 'cd /tmp/bj; python ./checkout_and_build_auto.py --prefix /usr/local --clean'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'ls -lrt /usr/local/lrose/bin'
+                sh 'ls -lrt /usr/local/lrose/lib'
+                sh '/usr/local/lrose/bin/RadxPrint -h'
+            }
+        }
+        
+        stage('Test2') {
+            steps {
+                sh '/usr/local/lrose/bin/RadxConvert -h'
+            }
+        }
+        
+        stage('Release') {
+            steps {
+                sh 'ls /tmp/bj/build_area'
+                sh '/tmp/bj/build_area/lrose-core/build/create_src_release.py --package=radx --releaseDir /tmp/bj/build_area/releases --force'
+            }
+        }
+    }
+}
