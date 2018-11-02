@@ -16,7 +16,7 @@ pipeline {
         stage('Fetch and Build') {
             steps {
                 sh 'cd /tmp/bj; wget https://raw.githubusercontent.com/NCAR/lrose-core/master/build/checkout_and_build_auto.py'
-                sh 'cd /tmp/bj; python ./checkout_and_build_auto.py --prefix /usr/local --clean'
+                sh 'cd /tmp/bj; python ./checkout_and_build_auto.py --prefix /usr/local/lrose --clean'
             }
         }
         
@@ -34,11 +34,11 @@ pipeline {
             }
         }
         
-        stage('Release') {
-            steps {
-                sh 'ls /tmp/bj/build_area'
-                sh '/tmp/bj/build_area/lrose-core/build/create_src_release.py --package=radx --releaseDir /tmp/bj/build_area/releases --force'
-            }
-        }
+        //stage('Release') {
+        //    steps {
+        //        sh 'ls /tmp/bj/build_area'
+        //        sh '/tmp/bj/build_area/lrose-core/build/create_src_release.py --package=radx --releaseDir /tmp/bj/build_area/releases --force'
+        //    }
+        //}
     }
 }
