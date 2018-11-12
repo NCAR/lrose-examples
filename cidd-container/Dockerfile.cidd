@@ -1,0 +1,46 @@
+# FROM registry.access.redhat.com/rhel7/rhel
+# RUN yum -y install httpd && yum -y update; yum clean all
+
+# To run ...
+#
+# make sure XQuartz is installed and accepts connections from local hosts
+#
+# add your current ifconfig net0 address to xhosts
+#
+# xhost +128.117.56.144
+# docker run -ti --rm -e DISPLAY=128.117.56.144:0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw i686ubuntu_prep
+
+
+FROM i686/ubuntu
+
+RUN apt-get -y update
+RUN apt-get -y install libx11-dev 
+RUN apt-get -y install fftw3-dev
+RUN apt-get -y install libpng-dev
+RUN apt-get -y install libexpat-dev
+RUN apt-get -y install libxext-dev
+RUN apt-get -y install make
+RUN apt-get -y install g++
+RUN apt-get -y install git
+RUN apt-get -y install python
+RUN apt-get -y install libz-dev
+RUN apt-get -y install libbz2-dev
+RUN apt-get -y install automake autoconf
+
+RUN apt-get -y install x11-apps
+RUN apt-get -y install  xauth 
+
+RUN mkdir /tmp/cidd_m32
+RUN cd /tmp/cidd_m32; git clone https://github.com/NCAR/lrose-netcdf
+RUN cd /tmp/cidd_m32/lrose-netcdf; ./build_and_install_netcdf.m32 -x /tmp/cidd_m32
+
+ADD . /usr/local/src
+
+  ####RUN  mv /tmp/bj/cidd-20180309.src.tgz /usr/local/src/.
+RUN  cd /usr/local/src; tar xvfz cidd-20180309.src.tgz 
+RUN  cd /usr/local/src/cidd-20180309.src; ./build/run_autoconf.cidd           
+RUN  cd /usr/local/src/cidd-20180309.src; ./build/build_lrose -p cidd -x /tmp/cidd_m32
+
+
+# ENTRYPOINT [ "/usr/sbin/httpd" ]
+# CMD [ "-D", "FOREGROUND" ]
