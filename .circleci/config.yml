@@ -20,9 +20,10 @@ jobs:
       - run: sleep 25 
   two:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: alpine 
+      # circleci/ruby:2.4.1
     steps:
-      - checkout
+      # - checkout
       - run: echo "A familiar hi"
       - run: sleep 15 
 
