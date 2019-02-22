@@ -1,15 +1,5 @@
 version: 2
 jobs:
-  
-  #build_centos_source:
-    #docker:
-      #- image: circleci/ruby:2.4.1
-    #steps:
-        ## What does checkout do?
-      #- checkout
-      #- run: echo "A first hello"
-      #- run: sleep 25 
-
   one:
     docker:
       - image: circleci/ruby:2.4.1
@@ -17,8 +7,6 @@ jobs:
       - checkout
       - run: echo "A first hello"
       - run: sleep 25 
-
-
   two:
     docker:
       - image: circleci/ruby:2.4.1
@@ -33,5 +21,4 @@ workflows:
     jobs:
       - one
       - two
-      #     requires:
-       #      - one
+
