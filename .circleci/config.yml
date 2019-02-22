@@ -12,9 +12,10 @@ jobs:
       
   one:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: alpine
+ #            - image: circleci/ruby:2.4.1
     steps:
-      - checkout
+      # - checkout
       - run: echo "A first hello"
       - run: sleep 25 
   two:
