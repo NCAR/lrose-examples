@@ -29,10 +29,14 @@ jobs:
 
 workflows:
   version: 2
-  one_and_two:
+  nightly:
+    triggers:  # use the triggers key to indicate a scheduled build
+      - schedule:
+          cron: "0 0 * * *" # use cron syntax to set the schedule
     jobs:
       - one
       - two
           # requires:
           #  - one
 
+  
