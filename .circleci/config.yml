@@ -35,8 +35,10 @@ jobs:
       - run: echo "after install"
       - run: mkdir -p workspace
       - run: cd workspace; git clone https://github.com/NCAR/lrose-core
+      - run: cd workspace; echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --package=lrose-blaze 
       - run: pwd
       - run: ls workspace
+      - run: RadxPrint -h
 
       ### Persist the specified paths into the workspace for use in downstream job. 
       - persist_to_workspace:
@@ -86,9 +88,9 @@ workflows:
   nightly:
     jobs:
       - one
-      - two:
-         requires:
-           - one
+     # - two:
+     #    requires:
+     #      - one
       #- three:
       #    requires:
       #      - one
