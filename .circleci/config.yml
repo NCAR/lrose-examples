@@ -31,7 +31,7 @@ jobs:
       - run: sleep 15 
 
 workflows:
-  # version: 2
+  version: 2
   # nightly:
     # triggers:  # use the triggers key to indicate a scheduled build
       # - schedule:
