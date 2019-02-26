@@ -37,8 +37,21 @@ jobs:
       - run: cd workspace; git clone https://github.com/NCAR/lrose-core
       - run: pwd
       - run: ls workspace
-      - run: ./workspace/lrose-core/codebase/make_bin/createConfigure.am.py --dir . --baseName configure.base.shared --shared --pkg lrose-blaze --debug
-      - run: echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --package=lrose-blaze 
+#       - run: ./workspace/lrose-core/codebase/make_bin/createConfigure.am.py --dir . --baseName configure.base.shared --shared --pkg lrose-blaze --debug
+      - run: |
+          if [[ `echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --package=lrose-blaze`]]; then
+              cat /tmp/lrose_build/logs/*
+          else
+              echo "It worked"
+          fi
+          
+      #- run: |
+          #if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
+            #echo "It worked!";
+          #else
+            ##echo "Nope!"; exit 1
+          #fi          
+          
       - run: RadxPrint -h
 
       ### Persist the specified paths into the workspace for use in downstream job. 
