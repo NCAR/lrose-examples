@@ -59,7 +59,7 @@ jobs:
       # - run: git clone https://github.com/NCAR/lrose-core
       - run: pwd
       - run: ls
-      - run: ./workspace/lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
+      - run: ./workspace/lrose-core/build/checkout_and_build_auto.py  -f --package=lrose-blaze 
       
         ### Persist the specified paths into the workspace for use in downstream job. 
       #- persist_to_workspace:
