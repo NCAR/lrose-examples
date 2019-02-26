@@ -8,6 +8,7 @@ executors:
     working_directory: /tmp
 
 jobs:
+
   one:
     executor: my-executor
     steps:
@@ -63,7 +64,7 @@ jobs:
           #  - echo-output
 
   three:
-       executor: my-executor
+    executor: my-executor
     steps: 
       - attach_workspace:
           ### Must be absolute path or relative path from working_directory
