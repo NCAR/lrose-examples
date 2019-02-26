@@ -76,10 +76,10 @@ workflows:
   nightly:
     jobs:
       - one
-      - two
+      - two:
           requires:
             - one
-      - three
+      - three:
           requires:
             - two
 
