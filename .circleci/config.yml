@@ -49,7 +49,7 @@ jobs:
     steps:
       ## - checkout
       - run: echo "A familiar hi"
-      # - run: git clone https://github.com/NCAR/lrose-core
+      - run: git clone https://github.com/NCAR/lrose-core
       - run: pwd
       - run: ls
       # - run: ./lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
