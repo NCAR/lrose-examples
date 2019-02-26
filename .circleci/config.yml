@@ -82,7 +82,9 @@ workflows:
             - one
       - three:
           requires:
+            - one
             - two
+            
 
 ######
 #
