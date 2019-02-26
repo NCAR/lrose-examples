@@ -1,45 +1,88 @@
-#version: 2
-#jobs:
-#
-  #one:
-    #docker:
-      #- image: centos 
-      ## - image: docker:stable-git 
-    #steps:
+version: 2.1
+
+
+executors:
+  my-executor:
+    docker:
+      - image: centos  # buildpack-deps:jessie
+    # working_directory: /tmp
+
+jobs:
+
+  one:
+    executor: my-executor
+    steps:
       ## - checkout
-      #- run: echo "A first hello"
-      #- run: yum -y install rsync
-      #- run: yum -y install gcc 
-      #- run: yum -y install gcc-gfortran
-      #- run: yum -y install gcc-c++
-      #- run: yum -y install make
-      #- run: yum -y install wget
-      #- run: yum -y install expat-devel
-      #- run: yum -y install m4
-      #- run: yum -y install jasper-devel
-      #- run: yum -y install flex-devel
-      #- run: yum -y install zlib-devel
-      #- run: yum -y install libpng-devel
-      #- run: yum -y install bzip2-devel
-      #- run: yum -y install qt5-qtbase-devel
-      #- run: yum -y install fftw3-devel
-      #- run: yum install -y xorg-x11-server-Xorg xorg-x11-xauth xorg-x11-apps
-      #- run: yum -y install libX11-devel
-      #- run: echo "after install"
-#
-  #two:
-    #docker:
-      #- image: alpine 
-    #steps:
+      - run: echo "A first hello"
+      - run: yum -y install rsync
+      - run: yum -y install gcc 
+      - run: yum -y install gcc-gfortran
+      - run: yum -y install gcc-c++
+      - run: yum -y install make
+      - run: yum -y install wget
+      - run: yum -y install expat-devel
+      - run: yum -y install m4
+      - run: yum -y install jasper-devel
+      - run: yum -y install flex-devel
+      - run: yum -y install zlib-devel
+      - run: yum -y install libpng-devel
+      - run: yum -y install bzip2-devel
+      - run: yum -y install qt5-qtbase-devel
+      - run: yum -y install fftw3-devel
+      - run: yum install -y xorg-x11-server-Xorg xorg-x11-xauth xorg-x11-apps
+      - run: yum -y install libX11-devel
+      - run: yum -y install git
+      - run: yum -y install ca-certificates # needed to persist workspace
+      - run: echo "after install"
+
+      ### Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
+      - persist_to_workspace:
+          ### Must be an absolute path, or relative path from working_directory. 
+          ### This is a directory on the container which is 
+          ### taken to be the root directory of the workspace.
+          root: workspace
+          ### Must be relative path from root
+          paths:
+            - echo-output
+ 
+  two:
+    executor: my-executor
+    steps:
       ## - checkout
-      #- run: echo "A familiar hi"
-#
-#workflows:
-  #version: 2
-  #nightly:
-    #jobs:
-      #- one
-      #- two
+      - run: echo "A familiar hi"
+      - run: git clone https://github.com/NCAR/lrose-core
+      - run: ./lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
+      
+        ### Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
+      - persist_to_workspace:
+          ### Must be an absolute path, or relative path from working_directory. 
+          ### This is a directory on the container which is 
+          ### taken to be the root directory of the workspace.
+          root: /usr/local/lrose
+          ### Must be relative path from root
+          #paths:
+          #  - echo-output
+
+  three:
+       executor: my-executor
+    steps: 
+      - attach_workspace:
+          ### Must be absolute path or relative path from working_directory
+          at: /usr/local/lrose
+      - run: RadxPrint -h
+      - run: echo "All done."
+
+workflows:
+  version: 2.1
+  nightly:
+    jobs:
+      - one
+      - two
+          requires:
+            - one
+      - three
+          requires:
+            - two
 
 ######
 #
@@ -117,51 +160,51 @@
 # This allows defining a docker image to reuse across jobs.
 # visit https://circleci.com/docs/2.0/reusing-config/#authoring-reusable-executors to learn more.
 #
-version: 2.1
-
-executors:
-  my-executor:
-    docker:
-      - image: centos  # buildpack-deps:jessie
-    working_directory: /tmp
-
-jobs:
-  flow:
-    executor: my-executor
-    steps:
-      - run: yum -y install ca-certificates
-      - run: mkdir -p workspace
-      - run: echo "Hello, world!" > workspace/echo-output
-      
-      ## Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
-      - persist_to_workspace:
-          ## Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
-          ## taken to be the root directory of the workspace.
-          root: workspace
-          ## Must be relative path from root
-          paths:
-            - echo-output
-
-  downstream:
-    executor: my-executor
-    steps:
-      - attach_workspace:
-          ## Must be absolute path or relative path from working_directory
-          at: /tmp/workspace
-
-      - run: |
-          if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
-            echo "It worked!";
-          else
-            #echo "Nope!"; exit 1
-          fi
-
-workflows:
-  version: 2.1
-
-  btd:
-    jobs:
-      - flow
-      - downstream:
-          requires:
-            - flow 
+#version: 2.1
+#
+#executors:
+  #my-executor:
+    #docker:
+      #- image: centos  # buildpack-deps:jessie
+    #working_directory: /tmp
+#
+#jobs:
+  #flow:
+    #executor: my-executor
+    #steps:
+      #- run: yum -y install ca-certificates
+      #- run: mkdir -p workspace
+      #- run: echo "Hello, world!" > workspace/echo-output
+      #
+      ### Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
+      #- persist_to_workspace:
+          ### Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          ### taken to be the root directory of the workspace.
+          #root: workspace
+          ### Must be relative path from root
+          #paths:
+            #- echo-output
+#
+  #downstream:
+    #executor: my-executor
+    #steps:
+      #- attach_workspace:
+          ### Must be absolute path or relative path from working_directory
+          #at: /tmp/workspace
+#
+      #- run: |
+          #if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
+            #echo "It worked!";
+          #else
+            ##echo "Nope!"; exit 1
+          #fi
+#
+#workflows:
+  #version: 2.1
+#
+  #btd:
+    #jobs:
+      #- flow
+      #- downstream:
+          #requires:
+            #- flow 
