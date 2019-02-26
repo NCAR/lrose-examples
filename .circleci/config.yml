@@ -35,11 +35,11 @@ jobs:
       - run: echo "after install"
 
       ### Persist the specified paths into the workspace for use in downstream job. 
-      # - persist_to_workspace:
+      - persist_to_workspace:
           # ### Must be an absolute path, or relative path from working_directory. 
           # ### This is a directory on the container which is 
           # ### taken to be the root directory of the workspace.
-          # root: /tmp
+          root: /tmp
           # ### Must be relative path from root
           # # paths:
            # #  - echo-output
@@ -48,6 +48,9 @@ jobs:
     executor: my-executor
     steps:
       ## - checkout
+      - attach_workspace:
+          ### Must be absolute path or relative path from working_directory
+          at: /tmp
       - run: echo "A familiar hi"
       - run: git clone https://github.com/NCAR/lrose-core
       - run: pwd
