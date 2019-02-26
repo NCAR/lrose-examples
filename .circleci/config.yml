@@ -3,7 +3,8 @@ jobs:
 
   one:
     docker:
-      - image: docker:stable-git 
+      - image: centos 
+      # - image: docker:stable-git 
     steps:
       # - checkout
       - run: echo "A first hello"
