@@ -9,22 +9,22 @@ jobs:
       # - checkout
       - run: echo "A first hello"
       - run: yum -y install rsync
-      - run yum -y install gcc 
-      - run yum -y install gcc-gfortran
-      - run yum -y install gcc-c++
-      - run yum -y install make
-      - run yum -y install wget
-      - run yum -y install expat-devel
-      - run yum -y install m4
-      - run yum -y install jasper-devel
-      - run yum -y install flex-devel
-      - run yum -y install zlib-devel
-      - run yum -y install libpng-devel
-      - run yum -y install bzip2-devel
-      - run yum -y install qt5-qtbase-devel
-      - run yum -y install fftw3-devel
-      - run yum install -y xorg-x11-server-Xorg xorg-x11-xauth xorg-x11-apps
-      - run yum -y install libX11-devel
+      - run: yum -y install gcc 
+      - run: yum -y install gcc-gfortran
+      - run: yum -y install gcc-c++
+      - run: yum -y install make
+      - run: yum -y install wget
+      - run: yum -y install expat-devel
+      - run: yum -y install m4
+      - run: yum -y install jasper-devel
+      - run: yum -y install flex-devel
+      - run: yum -y install zlib-devel
+      - run: yum -y install libpng-devel
+      - run: yum -y install bzip2-devel
+      - run: yum -y install qt5-qtbase-devel
+      - run: yum -y install fftw3-devel
+      - run: yum install -y xorg-x11-server-Xorg xorg-x11-xauth xorg-x11-apps
+      - run: yum -y install libX11-devel
       - run: echo "after install"
 
   two:
@@ -113,7 +113,7 @@ workflows:
 #jobs:
   #build: 
     #machine: 
-      #image: circleci/classic:201708-01 # VM will run Ubuntu 14.04 for this release date
+      #image: circleci/classic:201708-01 # VM will run: Ubuntu 14.04 for this release date
 #
 ## macOS
 #
