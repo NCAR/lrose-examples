@@ -34,10 +34,9 @@ jobs:
       - run: yum -y install ca-certificates # needed to persist workspace
       - run: echo "after install"
       - run: mkdir -p workspace
-      - run: cd workspace
-      - run: git clone https://github.com/NCAR/lrose-core
+      - run: cd workspace; git clone https://github.com/NCAR/lrose-core
       - run: pwd
-      - run: ls
+      - run: ls workspace
 
       ### Persist the specified paths into the workspace for use in downstream job. 
       - persist_to_workspace:
@@ -60,7 +59,7 @@ jobs:
       # - run: git clone https://github.com/NCAR/lrose-core
       - run: pwd
       - run: ls
-      - run: ./lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
+      - run: ./workspace/lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
       
         ### Persist the specified paths into the workspace for use in downstream job. 
       #- persist_to_workspace:
