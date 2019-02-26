@@ -33,16 +33,20 @@ jobs:
       - run: yum -y install git
       - run: yum -y install ca-certificates # needed to persist workspace
       - run: echo "after install"
+      - run: mkdir -p workspace
+      - run: git clone https://github.com/NCAR/lrose-core
+      - run: pwd
+      - run: ls
 
       ### Persist the specified paths into the workspace for use in downstream job. 
       - persist_to_workspace:
           # ### Must be an absolute path, or relative path from working_directory. 
           # ### This is a directory on the container which is 
           # ### taken to be the root directory of the workspace.
-          root: /tmp
+          root: workspace
           # ### Must be relative path from root
-          # # paths:
-           # #  - echo-output
+          paths:
+            - lrose-core
  
   two:
     executor: my-executor
@@ -50,12 +54,12 @@ jobs:
       ## - checkout
       - attach_workspace:
           ### Must be absolute path or relative path from working_directory
-          at: /tmp
+          at: /tmp/workspace
       - run: echo "A familiar hi"
-      - run: git clone https://github.com/NCAR/lrose-core
+      # - run: git clone https://github.com/NCAR/lrose-core
       - run: pwd
       - run: ls
-      # - run: ./lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
+      - run: ./lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
       
         ### Persist the specified paths into the workspace for use in downstream job. 
       #- persist_to_workspace:
