@@ -30,17 +30,17 @@ jobs:
       - run: echo "A familiar hi"
       - run: sleep 15 
 
-# workflows:
+workflows:
   # version: 2
   # nightly:
     # triggers:  # use the triggers key to indicate a scheduled build
       # - schedule:
           # cron: "0 0 * * *" # use cron syntax to set the schedule
-    # jobs:
-      # - one
-      # - two
-          # # requires:
-          # #  - one
+    jobs:
+      - one
+      - two
+          requires:
+            - one
 
 ######
 #
