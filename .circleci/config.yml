@@ -8,7 +8,6 @@ executors:
     working_directory: /tmp
 
 jobs:
-
   one:
     executor: my-executor
     steps:
@@ -50,17 +49,17 @@ jobs:
     steps:
       ## - checkout
       - run: echo "A familiar hi"
-      - run: git clone https://github.com/NCAR/lrose-core
+      # - run: git clone https://github.com/NCAR/lrose-core
       - run: pwd
       - run: ls
       # - run: ./lrose-core/build/checkout_and_build_auto.py  --package=lrose-blaze 
       
         ### Persist the specified paths into the workspace for use in downstream job. 
-      - persist_to_workspace:
+      #- persist_to_workspace:
           ### Must be an absolute path, or relative path from working_directory. 
           ### This is a directory on the container which is 
           ### taken to be the root directory of the workspace.
-          root: /usr/local/lrose
+       #   root: /usr/local/lrose
           ### Must be relative path from root
           #paths:
           #  - echo-output
@@ -68,9 +67,9 @@ jobs:
   three:
     executor: my-executor
     steps: 
-      - attach_workspace:
+      #- attach_workspace:
           ### Must be absolute path or relative path from working_directory
-          at: /usr/local/lrose
+      #    at: /usr/local/lrose
       - run: RadxPrint -h
       - run: echo "All done."
 
