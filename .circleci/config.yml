@@ -1,30 +1,18 @@
 version: 2
 jobs:
 
-  build_centos_source:
-    docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-        ## What does checkout do?
-      - checkout
-      - run: echo "A first hello"
-      - run: sleep 25 
-      
   one:
     docker:
-      -image: docker:stable-git 
-      # - image: alpine
- #            - image: circleci/ruby:2.4.1
+      - image: docker:stable-git 
     steps:
       # - checkout
       - run: echo "A first hello"
-      # - run: sleep 25 
       - run: yum -y install rsync
+      - run: echo "after install"
 
   two:
     docker:
       - image: alpine 
-      # circleci/ruby:2.4.1
     steps:
       # - checkout
       - run: echo "A familiar hi"
