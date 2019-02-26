@@ -122,7 +122,7 @@ version: 2.1
 executors:
   my-executor:
     docker:
-      - image: alpine  # buildpack-deps:jessie
+      - image: buildpack-deps:jessie
     working_directory: /tmp
 
 jobs:
