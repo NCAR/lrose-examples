@@ -34,6 +34,7 @@ jobs:
       - run: yum -y install ca-certificates # needed to persist workspace
       - run: echo "after install"
       - run: mkdir -p workspace
+      - run: cd workspace
       - run: git clone https://github.com/NCAR/lrose-core
       - run: pwd
       - run: ls
