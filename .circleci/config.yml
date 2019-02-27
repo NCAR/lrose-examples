@@ -43,7 +43,7 @@ jobs:
           if [[ `echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --package=lrose-blaze` == 0 ]]; then
               echo "It worked"
           else 
-              cat /tmp/lrose_build/logs/*
+              tail -n 100 /tmp/lrose_build/logs/*
           fi
           
       #- run: |
