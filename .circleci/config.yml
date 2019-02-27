@@ -54,8 +54,8 @@ jobs:
           #else
             ##echo "Nope!"; exit 1
           #fi          
-          
-      - run: RadxPrint -h
+      - run: ls -R /usr/local/lrose
+      - run: /usr/local/lrose/bin/RadxPrint -h
 
       ### Persist the specified paths into the workspace for use in downstream job. 
       - persist_to_workspace:
