@@ -104,6 +104,9 @@ jobs:
 workflows:
   version: 2.1
   nightly:
+    triggers: 
+      - schedule:
+          cron: "0 9 * * *"
     jobs:
       - one
      # - two:
