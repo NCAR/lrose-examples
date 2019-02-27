@@ -11,6 +11,7 @@ jobs:
   one:
     executor: my-executor
     steps:
+      - run: date
       ## - checkout
       - run: echo "A first hello"
       - run: yum -y install rsync
