@@ -106,8 +106,8 @@ workflows:
   nightly:
     triggers: 
       - schedule:
-          #     "mm hh day month dow"
-          cron: "30 22 * * *"
+          #     "mm hh day month dow"  Note: 22 is about 3pm MST
+          cron: "45 22 * * *"
 #          cron: "0 9 * * *"
           filters:
             branches:
