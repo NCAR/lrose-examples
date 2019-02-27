@@ -33,7 +33,7 @@ jobs:
       - run: yum -y install libX11-devel
       - run: yum -y install git
       - run: yum -y install ca-certificates # needed to persist workspace
-      - run: yum -y install curl  # needed for remote access; netcdf build
+      - run: yum -y install netcdf  # needed for remote access; netcdf build
       - run: yum -y install ca-certificates # needed to persist workspa
       - run: echo "after install"
       - run: mkdir -p workspace
@@ -42,7 +42,7 @@ jobs:
       - run: ls workspace
 #       - run: ./workspace/lrose-core/codebase/make_bin/createConfigure.am.py --dir . --baseName configure.base.shared --shared --pkg lrose-blaze --debug
       - run: |
-          if [[ `echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --package=lrose-blaze` == 0 ]]; then
+          if [[ `echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --useSystemNetcdf --package=lrose-blaze` == 0 ]]; then
               echo "It worked"
           else 
               tail -n 100 /tmp/lrose_build/logs/*
