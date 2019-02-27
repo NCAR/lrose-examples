@@ -107,6 +107,10 @@ workflows:
     triggers: 
       - schedule:
           cron: "0 9 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - one
      # - two:
