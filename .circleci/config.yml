@@ -39,7 +39,7 @@ jobs:
       - run: ls workspace
 #       - run: ./workspace/lrose-core/codebase/make_bin/createConfigure.am.py --dir . --baseName configure.base.shared --shared --pkg lrose-blaze --debug
       - run: |
-          if [ `echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --package=lrose-blaze` == 1]; then
+          if [[ `echo "y" | ./workspace/lrose-core/build/checkout_and_build_auto.py --package=lrose-blaze` == 1 ]]; then
               cat /tmp/lrose_build/logs/*
           else
               echo "It worked"
