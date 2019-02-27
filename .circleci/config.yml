@@ -33,7 +33,7 @@ jobs:
       - run: yum -y install libX11-devel
       - run: yum -y install git
       - run: yum -y install ca-certificates # needed to persist workspace
-      - run: yum -y install libnetcdf-dev  # needed for remote access; netcdf build
+      - run: yum -y install netcdf-cxx-devel.x86_64 # libnetcdf-dev  # needed for remote access; netcdf build
       - run: yum -y install ca-certificates # needed to persist workspa
       - run: echo "after install"
       - run: mkdir -p workspace
