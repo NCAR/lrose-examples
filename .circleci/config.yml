@@ -4,7 +4,7 @@ version: 2.1
 executors:
   my-executor:
     docker:
-      - image: centos  # buildpack-deps:jessie
+      - image: centos
     working_directory: /tmp
 
 jobs:
