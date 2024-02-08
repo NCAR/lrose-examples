@@ -103,18 +103,18 @@ jobs:
 
 workflows:
   version: 2.1
-  nightly:
-    triggers: 
-      - schedule:
+  #nightly:
+  #  triggers: 
+  #    - schedule:
           #     "mm hh day month dow"  Note: 22 is about 3pm MST
           # cron: "45 22 * * *"  # 3:45pm MST
-          cron: "0 9 * * *"  # 2:00am MST
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - one
+  #        cron: "0 9 * * *"  # 2:00am MST
+  #        filters:
+  #          branches:
+  #            only:
+  #              - master
+  #  jobs:
+  #    - one
      # - two:
      #    requires:
      #      - one
